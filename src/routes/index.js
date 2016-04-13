@@ -9,7 +9,7 @@ module.exports.configureRoutes = function _configureRoutes(server) {
 	/* STATIC CONTENT */
 	server.route({
 		method: 'GET',
-		path: '/static/{assetPath}',
+		path: '/static/{assetPath*}',
 		handler: staticContentHandlers.getAsset
 	});
 
