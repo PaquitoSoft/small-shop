@@ -1,7 +1,6 @@
 'use strict';
 
-const staticContentHandlers = require('./static-content'),
-	catalogHandlers = require('./catalog');
+const catalogHandlers = require('./catalog');
 
 
 module.exports.configureRoutes = function _configureRoutes(server) {
@@ -10,7 +9,11 @@ module.exports.configureRoutes = function _configureRoutes(server) {
 	server.route({
 		method: 'GET',
 		path: '/static/{assetPath*}',
-		handler: staticContentHandlers.getAsset
+		handler: {
+			directory: {
+				path: 'data'
+			}
+		}
 	});
 
 	/* CATALOG ROUTES */
