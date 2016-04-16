@@ -15,12 +15,15 @@
     "request": "^2.69.0"
   },
   "dependencies": {
+    "boom": "^3.1.2",
     "good": "^6.6.0",
     "good-console": "^5.3.1",
     "hapi": "^13.3.0",
     "inert": "^3.2.0",
     "mkdirp": "^0.5.1",
     "mongoose": "^4.4.12",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "uuid": "^2.0.2",
+    "yar": "^7.0.0"
   }
 }

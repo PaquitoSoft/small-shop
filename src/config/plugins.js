@@ -1,6 +1,7 @@
 'use strict';
 
 const staticContentPlugin = require('inert'),
+	yar = require('yar'),
 	loggerPlugin = require('good'),
 	loggerPluginConsoleReporter = require('good-console');
 
@@ -20,6 +21,18 @@ module.exports = [
 					log: '*'
 				}
 			}]
+		}
+	},
+	{
+		name: 'cookies',
+		plugin: yar,
+		options: {
+			storeBlank: false,
+			maxCookieSize: 0,
+			cookieOptions: {
+				password: 'fjadk=sfnd3ajh-kjaTsb.>kads-jkaf',
+				isSecure: false
+			}
 		}
 	}
 ];

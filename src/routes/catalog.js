@@ -10,15 +10,15 @@ function _getRandomNumber(min, max) {
 	return Math.random() * (max - min) + min;
 }
 
-module.exports.getCategories = function _getCategories(request, reply) {
+module.exports.getCategories = function getCategories(request, reply) {
 	models.Category.find(reply);
 };
 
-module.exports.getCategoryDetail = function _getCategoryDetail(request, reply) {
+module.exports.getCategoryDetail = function getCategoryDetail(request, reply) {
 	models.Category.findOne({id: request.params.categoryId}, reply);
 };
 
-module.exports.getFeaturedProducts = function _getFeaturedProducts(request, reply) {
+module.exports.getFeaturedProducts = function getFeaturedProducts(request, reply) {
 	async.waterfall([
 		(next) => {
 			models.Product.count(next);
@@ -31,10 +31,10 @@ module.exports.getFeaturedProducts = function _getFeaturedProducts(request, repl
 	], reply);
 };
 
-module.exports.getCategoryProducts = function _getCategoryProducts(request, reply) {
+module.exports.getCategoryProducts = function getCategoryProducts(request, reply) {
 	models.Product.find({categoryId: request.params.categoryId}, reply);
 };
 
-module.exports.getProductDetail = function _getProductDetail(request, reply) {
+module.exports.getProductDetail = function getProductDetail(request, reply) {
 	models.Product.findOne({id: request.params.productId}, reply);
 };

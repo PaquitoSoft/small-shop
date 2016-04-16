@@ -5,6 +5,7 @@ const async = require('async'),
 	appConfig = require('./config/application-config'),
 	pluginsConfig = require('./config/plugins'),
 	routesConfig = require('./routes'),
+	sharedMethods = require('./lib/server-methods'),
 	database = require('./lib/db');
 
 const server = new Hapi.Server();
@@ -29,6 +30,13 @@ async.series({
 			}, _next);
 		}, next);
 
+	},
+	registerSharedMethods: (next) => {
+		console.log('Server# Configuring shared server methods...');
+		sharedMethods.forEach(sharedMethod => {
+			server.method(sharedMethod);
+		});
+		next();
 	},
 	registerRoutes: (next) => {
 		console.log('Server# Configuring server routes...');

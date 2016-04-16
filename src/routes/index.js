@@ -1,6 +1,7 @@
 'use strict';
 
-const catalogHandlers = require('./catalog');
+const catalogHandlers = require('./catalog'),
+	shopCartHandlers = require('./shop-cart');
 
 
 module.exports.configureRoutes = function _configureRoutes(server) {
@@ -50,5 +51,22 @@ module.exports.configureRoutes = function _configureRoutes(server) {
 
 
 	/* SHOP ROUTES */
+	server.route({
+		method: 'GET',
+		path: '/shop-cart',
+		handler: shopCartHandlers.getShopCart
+	});
+
+	server.route({
+		method: 'POST',
+		path: '/shop-cart/product',
+		handler: shopCartHandlers.addProductToCart
+	});
+
+	server.route({
+		method: 'DELETE',
+		path: '/shop-cart/product/{productId}',
+		handler: shopCartHandlers.removeProductFromCart
+	});
 
 };
