@@ -17,7 +17,7 @@ function _saveShopCart(request, shopCart) {
 }
 
 module.exports.getShopCart = function getShopCart(request, reply) {
-	reply(_getShopCart(request));
+	reply(null, _getShopCart(request));
 };
 
 module.exports.addProductToCart = function addProductToCart(request, reply) {
@@ -25,7 +25,7 @@ module.exports.addProductToCart = function addProductToCart(request, reply) {
 		orderItem = shopCart.orderItems.find(orderItem => orderItem.productId === request.payload.productId);
 
 	if (orderItem) {
-		orderItem.quantity++;
+		orderItem.quantity += request.payload.quantity;
 	} else {
 		request.payload.id = uuid.v4();
 		shopCart.orderItems.push(request.payload);
@@ -33,7 +33,7 @@ module.exports.addProductToCart = function addProductToCart(request, reply) {
 
 	_saveShopCart(request, shopCart);
 
-	reply(shopCart);
+	reply(null, shopCart);
 };
 
 module.exports.removeProductFromCart = function removeProductFromCart(request, reply) {
@@ -43,7 +43,7 @@ module.exports.removeProductFromCart = function removeProductFromCart(request, r
 	if (orderItemIndex !== -1) {
 		shopCart.orderItems.splice(orderItemIndex, 1);
 		_saveShopCart(request, shopCart);
-		reply(shopCart);
+		reply(null, shopCart);
 	} else {
 		reply(Boom.notFound('Order Item not found is shop cart'));
 	}
