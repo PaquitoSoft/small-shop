@@ -7,7 +7,7 @@ const expect = require('chai').expect,
 
 const PRODUCT_KEYS = ['id', 'name', 'price', 'categoryId', 'sizes', 'colors', 'imagesUrls'];
 
-describe('Catalog routes', () => {
+describe('Catalog routes handlers', () => {
 
 	before(done => {
 		database.connect(done);
@@ -22,8 +22,9 @@ describe('Catalog routes', () => {
 			catalogHandlers.getCategories({}, (err, categories) => {
 				expect(err).to.equals(null);
 				expect(categories).to.have.lengthOf(15);
-				expect(categories[0].id).to.equals('1');
-				expect(categories[0].name).to.equals('Accesories');
+				categories.forEach(category => {
+					expect(category.toJSON()).to.contain.all.keys(['id', 'name']);
+				});
 				done();
 			});
 		});
