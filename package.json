@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./src/server",
-    "test": "./node_modules/.bin/mocha --ui bdd --recursive --prof ./spec/src"
+    "test": "./node_modules/.bin/mocha --ui bdd --recursive ./spec/src"
   },
   "author": "Paquitosoft",
   "license": "ISC",

@@ -26,3 +26,13 @@ module.exports.connect = (done) => {
 	});
 
 };
+
+module.exports.disconnect = (done) => {
+	if (db) {
+		db.close(() => {
+			db = undefined;
+			connected = false;
+			done();
+		});
+	}
+};

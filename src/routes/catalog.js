@@ -1,8 +1,8 @@
 'use strict';
 
-const async = require('async');
-
-const models = require('../models');
+const async = require('async'),
+	Boom = require('boom'),
+	models = require('../models');
 
 const FEATURED_PRODUCTS_COUNT = 8;
 
@@ -15,7 +15,13 @@ module.exports.getCategories = function getCategories(request, reply) {
 };
 
 module.exports.getCategoryDetail = function getCategoryDetail(request, reply) {
-	models.Category.findOne({id: request.params.categoryId}, reply);
+	models.Category.findOne({id: request.params.categoryId}, (err, category) => {
+		if (category) {
+			reply(null, category);
+		} else {
+			reply(err || Boom.notFound('Category not found'));
+		}
+	});
 };
 
 module.exports.getFeaturedProducts = function getFeaturedProducts(request, reply) {
@@ -36,5 +42,11 @@ module.exports.getCategoryProducts = function getCategoryProducts(request, reply
 };
 
 module.exports.getProductDetail = function getProductDetail(request, reply) {
-	models.Product.findOne({id: request.params.productId}, reply);
+	models.Product.findOne({id: request.params.productId}, (err, product) => {
+		if (product) {
+			reply(null, product);
+		} else {
+			reply(err || Boom.notFound('Product not found'));
+		}
+	});
 };
