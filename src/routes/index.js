@@ -1,10 +1,17 @@
 'use strict';
 
 const catalogHandlers = require('./catalog'),
-	shopCartHandlers = require('./shop-cart');
+	shopCartHandlers = require('./shop-cart'),
+	appInfo = require('../../package.json');
 
 
 module.exports.configureRoutes = function _configureRoutes(server) {
+
+	server.route({
+		method: 'GET',
+		path: '/version',
+		handler: (request, reply) => { reply({version:appInfo.version}); }
+	});
 
 	/* STATIC CONTENT */
 	server.route({
