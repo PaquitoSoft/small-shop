@@ -9,12 +9,14 @@ let productSchema = mongoose.Schema({
 	categoryId: Number,
 	imagesUrls: Array,
 	colors: [{
+		_id: false,
 		id: String,
 		name: String,
 		imageUrl: String,
 		sizes: [String]
 	}],
 	sizes: [{
+		_id: false,
 		id: String,
 		name: String
 	}]

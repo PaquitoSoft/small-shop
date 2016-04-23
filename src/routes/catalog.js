@@ -11,7 +11,7 @@ function _getRandomNumber(min, max) {
 }
 
 module.exports.getCategories = function getCategories(request, reply) {
-	models.Category.find(reply);
+	models.Category.find().lean().exec(reply);
 };
 
 module.exports.getCategoryDetail = function getCategoryDetail(request, reply) {
@@ -31,18 +31,18 @@ module.exports.getFeaturedProducts = function getFeaturedProducts(request, reply
 		},
 		(count, next) => {
 			const index = Math.max(0, _getRandomNumber(0, count - FEATURED_PRODUCTS_COUNT - 1)),
-				query = models.Product.find().skip(index).limit(FEATURED_PRODUCTS_COUNT);
+				query = models.Product.find().skip(index).limit(FEATURED_PRODUCTS_COUNT).lean();
 			query.exec(next);
 		}
 	], reply);
 };
 
 module.exports.getCategoryProducts = function getCategoryProducts(request, reply) {
-	models.Product.find({categoryId: request.params.categoryId}, reply);
+	models.Product.find({categoryId: request.params.categoryId}).lean().exec(reply);
 };
 
 module.exports.getProductDetail = function getProductDetail(request, reply) {
-	models.Product.findOne({id: request.params.productId}, (err, product) => {
+	models.Product.findOne({id: request.params.productId}).lean().exec((err, product) => {
 		if (product) {
 			reply(null, product);
 		} else {

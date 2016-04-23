@@ -23,7 +23,7 @@ describe('Catalog routes handlers', () => {
 				expect(err).to.equals(null);
 				expect(categories).to.have.lengthOf(15);
 				categories.forEach(category => {
-					expect(category.toJSON()).to.contain.all.keys(['id', 'name']);
+					expect(category).to.contain.all.keys(['id', 'name']);
 				});
 				done();
 			});
@@ -75,7 +75,7 @@ describe('Catalog routes handlers', () => {
 			catalogHandlers.getProductDetail(fakeRequest, (err, product) => {
 				expect(err).to.equals(null);
 				expect(product.id).to.equals('0335025001');
-				expect(product.toJSON()).to.contain.all.keys(PRODUCT_KEYS);
+				expect(product).to.contain.all.keys(PRODUCT_KEYS);
 				done();
 			});
 		});
@@ -95,7 +95,7 @@ describe('Catalog routes handlers', () => {
 				expect(err).to.equals(null);
 				expect(products).to.have.lengthOf(8);
 				products.forEach(product => {
-					expect(product.toJSON()).to.contain.all.keys(PRODUCT_KEYS);
+					expect(product).to.contain.all.keys(PRODUCT_KEYS);
 				});
 				done();
 			});
