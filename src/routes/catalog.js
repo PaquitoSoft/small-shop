@@ -25,13 +25,14 @@ module.exports.getCategoryDetail = function getCategoryDetail(request, reply) {
 };
 
 module.exports.getFeaturedProducts = function getFeaturedProducts(request, reply) {
+	const productsCount = request.query.count ? parseInt(request.query.count, 10) : FEATURED_PRODUCTS_COUNT;
 	async.waterfall([
 		(next) => {
 			models.Product.count(next);
 		},
 		(count, next) => {
-			const index = Math.max(0, _getRandomNumber(0, count - FEATURED_PRODUCTS_COUNT - 1)),
-				query = models.Product.find().skip(index).limit(FEATURED_PRODUCTS_COUNT).lean();
+			const index = Math.max(0, _getRandomNumber(0, count - productsCount - 1)),
+				query = models.Product.find().skip(index).limit(productsCount).lean();
 			query.exec(next);
 		}
 	], reply);
