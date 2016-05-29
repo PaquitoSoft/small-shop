@@ -12,7 +12,10 @@ const server = new Hapi.Server();
 server.connection({
 	port: process.env.PORT || 3003,
 	routes: {
-		cors: true
+		cors: {
+			origin: ['*'],
+			credentials: true
+		}
 	}
 });
 
