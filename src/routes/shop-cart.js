@@ -8,7 +8,7 @@ const async = require('async'),
 const SHOP_CART_COOKIE_NAME = 'shop-cart';
 
 function _getShopCart(request) {
-	return request.yar.get(SHOP_CART_COOKIE_NAME) || {id: uuid.v4(), orderItems: []};
+	return request.yar.get(SHOP_CART_COOKIE_NAME) || {orderId: uuid.v4(), orderItems: []};
 }
 
 function _saveShopCart(request, shopCart) {
@@ -24,16 +24,25 @@ module.exports.addProductToCart = function addProductToCart(request, reply) {
 	let shopCart = _getShopCart(request),
 		orderItem = shopCart.orderItems.find(orderItem => orderItem.productId === request.payload.productId);
 
-	if (orderItem) {
-		orderItem.quantity += request.payload.quantity;
-	} else {
-		request.payload.id = uuid.v4();
-		shopCart.orderItems.push(request.payload);
-	}
+	models.Product.findOne({id: request.payload.productId}, (err, data) => {
+		if (err) {
+			reply(err);
+		} else if (!data) {
+			reply(Boom.notFound('Product not found'));
+		} else {
+			if (orderItem) {
+				orderItem.quantity += request.payload.quantity;
+			} else {
+				orderItem = request.payload;
+				orderItem.id = uuid.v4();
+				orderItem.detail = data;
+				shopCart.orderItems.push(orderItem);
+			}
 
-	_saveShopCart(request, shopCart);
-
-	reply(null, shopCart);
+			_saveShopCart(request, shopCart);
+			reply(null, orderItem);
+		}
+	});
 };
 
 module.exports.removeProductFromCart = function removeProductFromCart(request, reply) {
