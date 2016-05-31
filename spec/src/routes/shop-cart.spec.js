@@ -41,13 +41,9 @@ describe('Shop cart routes handlers', () => {
 			quantity: 13
 		});
 
-		shopCartHandlers.addProductToCart(request, (err, newShopCart) => {
-			expect(err).to.equals(null);
-			expect(newShopCart).to.contain.all.keys(['id', 'orderItems']);
-			expect(newShopCart.orderItems).to.have.lengthOf(1);
-			expect(newShopCart.orderItems[0]).to.have.all.keys(['id', 'productId', 'colorId', 'sizeId', 'quantity']);
-			expect(newShopCart.orderItems[0].productId).to.equals('0202017039');
-			expect(newShopCart.orderItems[0].quantity).to.equals(13);
+		shopCartHandlers.addProductToCart(request, (err, orderItem) => {
+			expect(orderItem).to.contain.all.keys(['id', 'productId', 'colorId', 'sizeId', 'quantity', 'detail']);
+			expect(orderItem.detail.toJSON()).to.contain.all.keys(['id', 'name', 'price', 'categoryId', 'colors', 'sizes', 'imagesUrls']);
 			done();
 		});
 
@@ -63,12 +59,10 @@ describe('Shop cart routes handlers', () => {
 
 		async.times(3, (index, next) => {
 			shopCartHandlers.addProductToCart(clone(request), next);
-		}, (err, shopCarts) => {
-			const currentShopCart = shopCarts[2];
+		}, (err, orderItems) => {
 			expect(err).to.equals(null);
-			expect(currentShopCart).to.contain.all.keys(['id', 'orderItems']);
-			expect(currentShopCart.orderItems).to.have.lengthOf(1);
-			expect(currentShopCart.orderItems[0].quantity).to.equals(3);
+			expect(orderItems.every(orderItem => orderItem.productId === request.payload.productId)).to.equal(true);
+			orderItems[2].quantity = 3;
 			done();
 		});
 	});
@@ -162,7 +156,7 @@ describe('Shop cart routes handlers', () => {
 			expect(data.cart.orderItems).to.have.lengthOf(1);
 			expect(data.cart.orderItems[0].productId).to.equals('0202017039');
 			expect(data.cart.orderItems[0].quantity).to.equals(5);
-			expect(data.addProductCart).to.deep.equal(data.cart);
+			expect(data.addProductCart).to.deep.equal(data.cart.orderItems[0]);
 			done();
 		});
 	});

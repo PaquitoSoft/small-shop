@@ -91,7 +91,7 @@ describe('Catalog routes handlers', () => {
 		});
 
 		it('Should return featured product list', done => {
-			catalogHandlers.getFeaturedProducts({}, (err, products) => {
+			catalogHandlers.getFeaturedProducts({query:{}}, (err, products) => {
 				expect(err).to.equals(null);
 				expect(products).to.have.lengthOf(8);
 				products.forEach(product => {
@@ -101,9 +101,21 @@ describe('Catalog routes handlers', () => {
 			});
 		});
 
+		it('Should return featured product list of selected size', done => {
+			const fakeRequest = { query: {count: 20} };
+			catalogHandlers.getFeaturedProducts(fakeRequest, (err, products) => {
+				expect(err).to.equals(null);
+				expect(products).to.have.lengthOf(20);
+				products.forEach(product => {
+					expect(product).to.contain.all.keys(PRODUCT_KEYS);
+				});
+				done();
+			});
+		});
+
 		it('Should return different featured product list every time', done => {
 			async.times(2, (index, next) => {
-				catalogHandlers.getFeaturedProducts({}, next);
+				catalogHandlers.getFeaturedProducts({query:{}}, next);
 			}, (err, featuredProducts) => {
 				expect(err).to.equals(null);
 
