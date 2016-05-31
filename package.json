@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./src/server",
-    "test": "./node_modules/.bin/mocha --ui bdd --recursive ./spec/src"
+    "test": "./node_modules/.bin/mocha --ui bdd --recursive --timeout 5000 ./spec/src"
   },
   "author": "Paquitosoft",
   "license": "ISC",
