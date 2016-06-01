@@ -41,7 +41,7 @@ module.exports.addProductToCart = function addProductToCart(request, reply) {
 			}
 
 			_saveShopCart(request, shopCart);
-			reply(null, orderItem);
+			reply(null, shopCart);
 		}
 	});
 };

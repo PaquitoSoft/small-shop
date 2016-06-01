@@ -41,9 +41,10 @@ describe('Shop cart routes handlers', () => {
 			quantity: 13
 		});
 
-		shopCartHandlers.addProductToCart(request, (err, orderItem) => {
-			expect(orderItem).to.contain.all.keys(['id', 'productId', 'colorId', 'sizeId', 'quantity', 'detail']);
-			expect(orderItem.detail.toJSON()).to.contain.all.keys(['id', 'name', 'price', 'categoryId', 'colors', 'sizes', 'imagesUrls']);
+		shopCartHandlers.addProductToCart(request, (err, shopCart) => {
+			expect(shopCart).to.contains.all.keys(['orderId', 'orderItems']);
+			expect(shopCart.orderItems[0]).to.contain.all.keys(['id', 'productId', 'colorId', 'sizeId', 'quantity', 'detail']);
+			expect(shopCart.orderItems[0].detail.toJSON()).to.contain.all.keys(['id', 'name', 'price', 'categoryId', 'colors', 'sizes', 'imagesUrls']);
 			done();
 		});
 
@@ -59,10 +60,10 @@ describe('Shop cart routes handlers', () => {
 
 		async.times(3, (index, next) => {
 			shopCartHandlers.addProductToCart(clone(request), next);
-		}, (err, orderItems) => {
+		}, (err, shopCarts) => {
 			expect(err).to.equals(null);
-			expect(orderItems.every(orderItem => orderItem.productId === request.payload.productId)).to.equal(true);
-			orderItems[2].quantity = 3;
+			expect(shopCarts.every(shopCart => shopCart.orderItems[0].productId === request.payload.productId)).to.equal(true);
+			shopCarts[2].orderItems[0].quantity = 3;
 			done();
 		});
 	});
