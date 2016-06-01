@@ -58,3 +58,16 @@ module.exports.removeProductFromCart = function removeProductFromCart(request, r
 		reply(Boom.notFound('Order Item not found is shop cart'));
 	}
 };
+
+module.exports.removeOrderItemFromCart = function removeOrderItemFromCart(request, reply) {
+	let shopCart = _getShopCart(request),
+		orderItemIndex = shopCart.orderItems.findIndex(orderItem => orderItem.id === request.params.orderItemId);
+
+	if (orderItemIndex !== -1) {
+		shopCart.orderItems.splice(orderItemIndex, 1);
+		_saveShopCart(request, shopCart);
+		reply(null, shopCart);
+	} else {
+		reply(Boom.notFound('Order Item not found is shop cart'));
+	}	
+};

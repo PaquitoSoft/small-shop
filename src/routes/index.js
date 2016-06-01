@@ -76,4 +76,10 @@ module.exports.configureRoutes = function _configureRoutes(server) {
 		handler: shopCartHandlers.removeProductFromCart
 	});
 
+	server.route({
+		method: 'DELETE',
+		path: '/shop-cart/order-item/{orderItemId}',
+		handler: shopCartHandlers.removeOrderItemFromCart
+	});
+
 };

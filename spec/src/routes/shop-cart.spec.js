@@ -157,7 +157,6 @@ describe('Shop cart routes handlers', () => {
 			expect(data.cart.orderItems).to.have.lengthOf(1);
 			expect(data.cart.orderItems[0].productId).to.equals('0202017039');
 			expect(data.cart.orderItems[0].quantity).to.equals(5);
-			expect(data.addProductCart).to.deep.equal(data.cart.orderItems[0]);
 			done();
 		});
 	});
