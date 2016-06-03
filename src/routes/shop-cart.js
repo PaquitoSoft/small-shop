@@ -16,6 +16,20 @@ function _saveShopCart(request, shopCart) {
 	return shopCart;
 }
 
+function _updateShopCart(request, reply, orderItemId, handleShopCart) {
+	let shopCart = _getShopCart(request),
+		orderItemIndex = shopCart.orderItems.findIndex(orderItem => orderItem.id === orderItemId);
+
+	if (orderItemIndex !== -1) {
+		// shopCart.orderItems.splice(orderItemIndex, 1);
+		shopCart = handleShopCart.call(null, shopCart, orderItemIndex);
+		_saveShopCart(request, shopCart);
+		reply(null, shopCart);
+	} else {
+		reply(Boom.notFound('Order Item not found is shop cart'));
+	}	
+}
+
 module.exports.getShopCart = function getShopCart(request, reply) {
 	reply(null, _getShopCart(request));
 };
@@ -49,28 +63,16 @@ module.exports.addProductToCart = function addProductToCart(request, reply) {
 	});
 };
 
-module.exports.removeProductFromCart = function removeProductFromCart(request, reply) {
-	let shopCart = _getShopCart(request),
-		orderItemIndex = shopCart.orderItems.findIndex(orderItem => orderItem.productId === request.params.productId);
-
-	if (orderItemIndex !== -1) {
-		shopCart.orderItems.splice(orderItemIndex, 1);
-		_saveShopCart(request, shopCart);
-		reply(null, shopCart);
-	} else {
-		reply(Boom.notFound('Order Item not found is shop cart'));
-	}
+module.exports.updateOrderItemInCart = function updateOrderItemInCart(request, reply) {
+	_updateShopCart(request, reply, request.payload.id, (shopCart, orderItemIndex) => {
+		shopCart.orderItems.splice(orderItemIndex, 1, request.payload);
+		return shopCart;
+	});
 };
 
 module.exports.removeOrderItemFromCart = function removeOrderItemFromCart(request, reply) {
-	let shopCart = _getShopCart(request),
-		orderItemIndex = shopCart.orderItems.findIndex(orderItem => orderItem.id === request.params.orderItemId);
-
-	if (orderItemIndex !== -1) {
+	_updateShopCart(request, reply, request.params.orderItemId, (shopCart, orderItemIndex) => {
 		shopCart.orderItems.splice(orderItemIndex, 1);
-		_saveShopCart(request, shopCart);
-		reply(null, shopCart);
-	} else {
-		reply(Boom.notFound('Order Item not found is shop cart'));
-	}	
+		return shopCart;
+	});
 };

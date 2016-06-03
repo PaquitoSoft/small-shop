@@ -71,15 +71,15 @@ module.exports.configureRoutes = function _configureRoutes(server) {
 	});
 
 	server.route({
-		method: 'DELETE',
-		path: '/shop-cart/product/{productId}',
-		handler: shopCartHandlers.removeProductFromCart
+		method: 'PUT',
+		path: '/shop-cart/order-item',
+		handler: shopCartHandlers.updateOrderItemInCart
 	});
 
 	server.route({
 		method: 'DELETE',
 		path: '/shop-cart/order-item/{orderItemId}',
 		handler: shopCartHandlers.removeOrderItemFromCart
-	});
+	});	
 
 };

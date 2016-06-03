@@ -68,7 +68,7 @@ describe('Shop cart routes handlers', () => {
 		});
 	});
 
-	it('Should remove products from shop cart', done => {
+	xit('Should remove products from shop cart', done => {
 		const request = _createFakeRequest({
 			productId: '0202017039',
 			colorId: '0202017007',
@@ -111,7 +111,7 @@ describe('Shop cart routes handlers', () => {
 		}, done);
 	});
 
-	it('Should return a 404 error when trying to remove a non existing product', done => {
+	xit('Should return a 404 error when trying to remove a non existing product', done => {
 		const request = _createFakeRequest(
 			{
 				productId: '0202017039',
@@ -160,5 +160,10 @@ describe('Shop cart routes handlers', () => {
 			done();
 		});
 	});
+
+	it('Should add an order-item to the shop-cart');
+	it('Should return an error when trying to add a non existing order-item');
+	it('Should update an order-item in shop-cart');
+	it('Should return an error when trying to update a non existing order-item');
 
 });
