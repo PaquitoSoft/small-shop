@@ -22,8 +22,11 @@ module.exports.getShopCart = function getShopCart(request, reply) {
 
 module.exports.addProductToCart = function addProductToCart(request, reply) {
 	let shopCart = _getShopCart(request),
-		// TODO Color and size must also be checked
-		orderItem = shopCart.orderItems.find(orderItem => orderItem.productId === request.payload.productId);
+		orderItem = shopCart.orderItems.find(orderItem => {
+			return orderItem.productId === request.payload.productId
+				&& orderItem.colorId === request.payload.colorId
+				&& orderItem.sizeId === request.payload.sizeId;
+		});
 
 	models.Product.findOne({id: request.payload.productId}, (err, data) => {
 		if (err) {
