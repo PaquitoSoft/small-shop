@@ -68,76 +68,6 @@ describe('Shop cart routes handlers', () => {
 		});
 	});
 
-	xit('Should remove products from shop cart', done => {
-		const request = _createFakeRequest({
-			productId: '0202017039',
-			colorId: '0202017007',
-			sizeId: '005',
-			quantity: 5
-		});
-		async.series({
-			bootstrapCheck: next => {
-				shopCartHandlers.getShopCart(request, (err, shopCart) => {
-					expect(err).to.equals(null);
-					expect(shopCart.orderItems).to.have.lengthOf(0);
-					next();
-				});
-			},
-			addProductCart: next => {
-				shopCartHandlers.addProductToCart(request, next);
-			},
-			checkCart: next => {
-				shopCartHandlers.getShopCart(request, (err, shopCart) => {
-					expect(err).to.equals(null);
-					expect(shopCart.orderItems).to.have.lengthOf(1);
-					next();
-				});
-			},
-			removeProductFromCart: next => {
-				var req = _createFakeRequest(null, {productId: '0202017039'});
-				shopCartHandlers.removeProductFromCart(req, (err, newCart) => {
-					expect(err).to.equals(null);
-					expect(newCart.orderItems).to.have.lengthOf(0);
-					next();
-				});
-			},
-			checkCartAgain: next => {
-				shopCartHandlers.getShopCart(request, (err, shopCart) => {
-					expect(err).to.equals(null);
-					expect(shopCart.orderItems).to.have.lengthOf(0);
-					next();
-				});
-			}
-		}, done);
-	});
-
-	xit('Should return a 404 error when trying to remove a non existing product', done => {
-		const request = _createFakeRequest(
-			{
-				productId: '0202017039',
-				colorId: '0202017007',
-				sizeId: '005',
-				quantity: 5
-			},
-			{
-				productId: 'ZZZ'
-			}
-		);
-
-		async.series({
-			addProductCart: next => {
-				shopCartHandlers.addProductToCart(request, next);
-			},
-			removeProductFromCart: next => {
-				shopCartHandlers.removeProductFromCart(request, next);
-			}
-		}, err => {
-			expect(err).to.be.an.instanceof(Error);
-			expect(err.output.statusCode).to.equals(404);
-			done();
-		});
-	});
-
 	it('Should return the shop cart', done => {
 		const request = _createFakeRequest({
 			productId: '0202017039',
@@ -161,9 +91,134 @@ describe('Shop cart routes handlers', () => {
 		});
 	});
 
-	it('Should add an order-item to the shop-cart');
-	it('Should return an error when trying to add a non existing order-item');
-	it('Should update an order-item in shop-cart');
-	it('Should return an error when trying to update a non existing order-item');
+	it('Should add an order-item to the shop-cart', done => {
+		const request = _createFakeRequest({
+			productId: '0202017039',
+			colorId: '0202017007',
+			sizeId: '005',
+			quantity: 5
+		});
+		async.waterfall([
+			function bootstrapCheck(next) {
+				shopCartHandlers.getShopCart(request, (err, shopCart) => {
+					expect(err).to.equals(null);
+					expect(shopCart.orderItems).to.have.lengthOf(0);
+					next();
+				});
+			},
+			function addProductCart(next) {
+				shopCartHandlers.addProductToCart(request, next);
+			},
+			function checkCart(shopCart, next) {
+				expect(shopCart.orderItems).to.have.lengthOf(1);
+				next(null, shopCart.orderItems[0].id);
+			},
+			function removeProductFromCart(orderItemId, next) {
+				var req = _createFakeRequest(null, {orderItemId});
+				shopCartHandlers.removeOrderItemFromCart(req, (err, newCart) => {
+					expect(err).to.equals(null);
+					expect(newCart.orderItems).to.have.lengthOf(0);
+					next();
+				});
+			},
+			function checkCartAgain(next) {
+				shopCartHandlers.getShopCart(request, (err, shopCart) => {
+					expect(err).to.equals(null);
+					expect(shopCart.orderItems).to.have.lengthOf(0);
+					next();
+				});
+			}
+		], done);
+	});
+
+	it('Should return an error when trying to add a non existing order-item', done => {
+		const request = _createFakeRequest(
+			{
+				productId: '0202017039',
+				colorId: '0202017007',
+				sizeId: '005',
+				quantity: 5
+			},
+			{
+				orderItemId: 'ZZZ'
+			}
+		);
+
+		async.series({
+			addProductCart: next => {
+				shopCartHandlers.addProductToCart(request, next);
+			},
+			removeOrderItemFromCart: next => {
+				shopCartHandlers.removeOrderItemFromCart(request, next);
+			}
+		}, err => {
+			expect(err).to.be.an.instanceof(Error);
+			expect(err.output.statusCode).to.equals(404);
+			expect(err.output.payload.message).to.equals('Order Item not found in shop cart');
+			done();
+		});
+	});
+
+	it('Should update an order-item in shop-cart', done => {
+		const request = _createFakeRequest({
+			productId: '0202017039',
+			colorId: '0202017007',
+			sizeId: '005',
+			quantity: 5
+		});
+
+		async.waterfall([
+			function addProductToCart(next) {
+				shopCartHandlers.addProductToCart(request, next);
+			},
+			function updateOrderItem(shopCart, next) {
+				expect(shopCart.orderItems).to.have.length(1);
+				expect(shopCart.orderItems[0].productId).to.equals('0202017039');
+				expect(shopCart.orderItems[0].quantity).to.equals(5);
+				
+				let orderItem = Object.assign({}, shopCart.orderItems[0]);
+				orderItem.quantity = 10;
+				shopCartHandlers.updateOrderItemInCart(_createFakeRequest(orderItem), (err, shopCart) => {
+					expect(err).to.equals(null);
+					expect(shopCart.orderItems).to.have.length(1);
+					expect(shopCart.orderItems[0].productId).to.equals('0202017039');
+					expect(shopCart.orderItems[0].quantity).to.equals(10);
+					expect(shopCart.orderItems[0]).to.deep.equals(orderItem);
+					next();
+				});
+			},
+
+		], done);
+	});
+
+	it('Should return an error when trying to update a non existing order-item', done => {
+		const request = _createFakeRequest({
+			productId: '0202017039',
+			colorId: '0202017007',
+			sizeId: '005',
+			quantity: 5
+		});
+
+		async.waterfall([
+			function addProductToCart(next) {
+				shopCartHandlers.addProductToCart(request, next);
+			},
+			function updateOrderItem(shopCart, next) {
+				expect(shopCart.orderItems).to.have.length(1);
+				expect(shopCart.orderItems[0].productId).to.equals('0202017039');
+				expect(shopCart.orderItems[0].quantity).to.equals(5);
+				
+				let orderItem = Object.assign({}, shopCart.orderItems[0]);
+				orderItem.id = 'unknown-order-item-id';
+				shopCartHandlers.updateOrderItemInCart(_createFakeRequest(orderItem), (err, shopCart) => {
+					expect(err).to.be.an.instanceof(Error);
+					expect(err.output.statusCode).to.equals(404);
+					expect(err.output.payload.message).to.equals('Order Item not found in shop cart');
+					done();
+				});
+			},
+
+		], done);
+	});
 
 });

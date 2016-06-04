@@ -26,7 +26,7 @@ function _updateShopCart(request, reply, orderItemId, handleShopCart) {
 		_saveShopCart(request, shopCart);
 		reply(null, shopCart);
 	} else {
-		reply(Boom.notFound('Order Item not found is shop cart'));
+		reply(Boom.notFound('Order Item not found in shop cart'));
 	}	
 }
 
@@ -65,7 +65,7 @@ module.exports.addProductToCart = function addProductToCart(request, reply) {
 
 module.exports.updateOrderItemInCart = function updateOrderItemInCart(request, reply) {
 	_updateShopCart(request, reply, request.payload.id, (shopCart, orderItemIndex) => {
-		shopCart.orderItems.splice(orderItemIndex, 1, request.payload);
+		shopCart.orderItems[orderItemIndex].quantity = request.payload.quantity;
 		return shopCart;
 	});
 };
