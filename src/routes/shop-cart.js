@@ -6,6 +6,7 @@ const async = require('async'),
 	models = require('../models');
 
 const SHOP_CART_COOKIE_NAME = 'shop-cart';
+const FINALIZED_ORDERS_COOKIE_NAME = 'orders';
 
 function _getShopCart(request) {
 	return request.yar.get(SHOP_CART_COOKIE_NAME) || {orderId: uuid.v4(), orderItems: []};
@@ -75,4 +76,30 @@ module.exports.removeOrderItemFromCart = function removeOrderItemFromCart(reques
 		shopCart.orderItems.splice(orderItemIndex, 1);
 		return shopCart;
 	});
+};
+
+module.exports.orderCheckout = function orderCheckout(request, reply) {
+	const shopCart = _getShopCart(request);
+	const orders = request.yar.get(SHOP_CART_COOKIE_NAME) || {};
+	const newOrder = {
+		id: shopCart.orderId,
+		orderItems: shopCart.orderItems,
+		address: request.payload.orderAddress,
+		paymentMethodCode: request.payload.paymentMethodCode
+	};
+
+	setTimeout(function() {
+		request.yar.set(SHOP_CART_COOKIE_NAME, null);
+		orders[newOrder.id] = newOrder;
+		request.yar.set(FINALIZED_ORDERS_COOKIE_NAME, orders);
+		reply(null, {orderId: newOrder.id});
+	}, 1500);
+};
+
+module.exports.getOrderDetail = function getOrderDetail(request, reply) {
+	const orders = request.yar.get(FINALIZED_ORDERS_COOKIE_NAME) || {};
+	const orderDetail = orders[request.params.orderId];
+	const error = orderDetail ? null : Boom.notFound(`Order (${request.params.orderId}) not found`);
+
+	reply(error, orderDetail);
 };

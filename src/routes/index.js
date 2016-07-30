@@ -80,6 +80,18 @@ module.exports.configureRoutes = function _configureRoutes(server) {
 		method: 'DELETE',
 		path: '/shop-cart/order-item/{orderItemId}',
 		handler: shopCartHandlers.removeOrderItemFromCart
-	});	
+	});
+
+	server.route({
+		method: 'POST',
+		path: '/shop-cart/checkout',
+		handler: shopCartHandlers.orderCheckout
+	});
+
+	server.route({
+		method: 'GET',
+		path: '/shop-cart/order-detail/{orderId}',
+		handler: shopCartHandlers.getOrderDetail
+	});
 
 };
